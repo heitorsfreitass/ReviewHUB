@@ -43,14 +43,14 @@
     <section class="mb-5">
         <div class="rh-section-header">
             <h2 class="rh-section-title">
-                <i class="bi bi-grid-3x3-gap text-rh-primary me-1"></i> Explorar por categoria
+                Explorar por categoria
             </h2>
         </div>
         <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 row-cols-lg-10 g-2">
             @foreach($categorias as $categoria)
                 <div class="col">
                     <a href="{{ route('produtos.index', ['categoria' => $categoria->slug]) }}"
-                       class="rh-category-pill w-100">
+                        class="rh-category-pill w-100">
                         <span class="rh-cat-icon">{{ $categoria->icone }}</span>
                         <span>{{ $categoria->nome }}</span>
                         <span class="rh-cat-count">{{ $categoria->produtos_count }}</span>
@@ -65,10 +65,10 @@
     <section class="mb-5">
         <div class="rh-section-header">
             <h2 class="rh-section-title">
-                <i class="bi bi-star-fill text-rh-accent me-1"></i> Melhor avaliados
+                Melhor avaliados
             </h2>
             <a href="{{ route('produtos.index', ['ordem' => 'melhor_nota']) }}" class="fs-sm">
-                Ver todos <i class="bi bi-arrow-right"></i>
+                Ver todos
             </a>
         </div>
         <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
@@ -86,10 +86,10 @@
     <section class="mb-5">
         <div class="rh-section-header">
             <h2 class="rh-section-title">
-                <i class="bi bi-fire text-danger me-1"></i> Mais avaliados
+                Mais avaliados
             </h2>
             <a href="{{ route('produtos.index', ['ordem' => 'mais_avaliados']) }}" class="fs-sm">
-                Ver todos <i class="bi bi-arrow-right"></i>
+                Ver todos
             </a>
         </div>
         <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
@@ -108,10 +108,10 @@
             <div class="col-lg-8">
                 <div class="rh-section-header">
                     <h2 class="rh-section-title">
-                        <i class="bi bi-clock-history text-rh-primary me-1"></i> Recém adicionados
+                        Recém adicionados
                     </h2>
                     <a href="{{ route('produtos.index') }}" class="fs-sm">
-                        Ver todos <i class="bi bi-arrow-right"></i>
+                        Ver todos
                     </a>
                 </div>
                 <div class="row row-cols-2 row-cols-sm-4 g-3">
@@ -126,7 +126,7 @@
             <!-- CTA -->
             <div class="col-lg-4">
                 <div class="rh-card h-100 d-flex flex-column justify-content-center align-items-center text-center p-4"
-                     style="background: linear-gradient(135deg, var(--rh-primary-light), #ede9fe);">
+                    style="background: linear-gradient(135deg, var(--rh-primary-light), #ede9fe);">
                     <i class="bi bi-box-seam" style="font-size:3rem; color: var(--rh-primary);"></i>
                     <h4 class="fw-700 mt-3 mb-2">Não achou o produto?</h4>
                     <p class="text-rh-muted fs-sm mb-4">

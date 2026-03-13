@@ -47,9 +47,15 @@
             <!-- Nav direita -->
             <ul class="navbar-nav ms-auto align-items-center gap-2">
                 <li class="nav-item">
-                    <a class="btn-rh-primary" href="{{ route('produtos.create') }}">
-                        <i class="bi bi-plus-lg"></i> Cadastrar Produto
-                    </a>
+                    @auth
+                        <a class="btn-rh-primary" href="{{ route('produtos.create') }}">
+                            <i class="bi bi-plus-lg"></i> Cadastrar Produto
+                        </a>
+                    @else 
+                        <a class="btn-rh-primary" href="{{ route('login') }}">
+                            <i class="bi bi-plus-lg"></i> Cadastrar Produto
+                        </a>
+                    @endauth
                 </li>
 
                 @auth

@@ -19,9 +19,15 @@ class Produto extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome', 'slug', 'marca', 'descricao',
-        'imagem', 'categoria_id', 'user_id',
-        'total_avaliacoes', 'media_nota',
+        'nome',
+        'slug',
+        'marca',
+        'descricao',
+        'imagem',
+        'categoria_id',
+        'user_id',
+        'total_avaliacoes',
+        'media_nota',
     ];
 
     protected function casts(): array
@@ -57,7 +63,7 @@ class Produto extends Model
     public function scopeMelhorNotados($query)
     {
         return $query->where('total_avaliacoes', '>', 0)
-                     ->orderByDesc('media_nota');
+            ->orderByDesc('media_nota');
     }
 
     public function scopeRecentes($query)
@@ -74,8 +80,8 @@ class Produto extends Model
     {
         return $query->where(function ($q) use ($termo) {
             $q->where('nome', 'like', "%{$termo}%")
-              ->orWhere('marca', 'like', "%{$termo}%")
-              ->orWhere('descricao', 'like', "%{$termo}%");
+                ->orWhere('marca', 'like', "%{$termo}%")
+                ->orWhere('descricao', 'like', "%{$termo}%");
         });
     }
 
@@ -121,8 +127,8 @@ class Produto extends Model
 
         while (
             static::where('slug', $slug)
-                  ->when($ignorarId, fn($q) => $q->where('id', '!=', $ignorarId))
-                  ->exists()
+            ->when($ignorarId, fn($q) => $q->where('id', '!=', $ignorarId))
+            ->exists()
         ) {
             $slug = "{$original}-{$contador}";
             $contador++;

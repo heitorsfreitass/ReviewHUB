@@ -12,9 +12,17 @@ class Avaliacao extends Model
     protected $table = 'avaliacoes';
 
     protected $fillable = [
-        'produto_id', 'user_id', 'nota', 'titulo',
-        'conteudo', 'preco_pago', 'loja', 'url_loja',
-        'recomenda', 'votos_uteis', 'imagens',
+        'produto_id',
+        'user_id',
+        'nota',
+        'titulo',
+        'conteudo',
+        'preco_pago',
+        'loja',
+        'url_loja',
+        'recomenda',
+        'votos_uteis',
+        'imagens',
     ];
 
     protected function casts(): array
@@ -23,7 +31,7 @@ class Avaliacao extends Model
             'nota'       => 'integer',
             'preco_pago' => 'decimal:2',
             'recomenda'  => 'boolean',
-            'votos_uteis'=> 'integer',
+            'votos_uteis' => 'integer',
             'imagens'    => 'array',
         ];
     }
@@ -51,7 +59,7 @@ class Avaliacao extends Model
 
     public function getNotaTextoAttribute(): string
     {
-        return match($this->nota) {
+        return match ($this->nota) {
             1 => 'Péssimo',
             2 => 'Ruim',
             3 => 'Regular',
