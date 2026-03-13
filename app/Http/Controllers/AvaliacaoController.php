@@ -6,6 +6,7 @@ use App\Http\Requests\StoreAvaliacaoRequest;
 use App\Models\Avaliacao;
 use App\Models\Produto;
 use App\Models\VotoUtilidade;
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 
 class AvaliacaoController extends Controller
@@ -29,9 +30,17 @@ class AvaliacaoController extends Controller
 
     /** Salva nova avaliação */
     public function store(StoreAvaliacaoRequest $request, Produto $produto)
-    {
-        $avaliacao = $produto->avaliacoes()->create([
-            ...$request->validated(),
+    {   
+        $dados = $request->validated();
+
+        if ($request->hasFile('imagens')) {
+            $dados['imagens'] = collect($request->file('imagens'))
+                ->map(fn($img) => $img->store('avaliacoes', 'public'))
+                ->toArray();
+        }
+
+        $produto->avaliacoes()->create([
+            ...$dados,
             'user_id' => auth()->id(),
         ]);
 
@@ -52,7 +61,21 @@ class AvaliacaoController extends Controller
     {
         $this->authorize('update', $avaliacao);
 
-        $avaliacao->update($request->validated());
+        $dados = $request->validated();
+
+        if ($request->hasFile('imagens')) {
+            foreach ($avaliacao->imagens ?? [] as $path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            $dados['imagens'] = collect($request->file('imagens'))
+                ->map(fn($img) => $img->store('avaliacoes', 'public'))
+                ->toArray();
+        } else {
+            unset($dados['imagens']); // deixa as que já tem
+        }
+
+        $avaliacao->update($dados);
 
         return redirect()
             ->route('produtos.show', $produto)

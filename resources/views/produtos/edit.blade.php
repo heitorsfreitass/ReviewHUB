@@ -76,4 +76,30 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+function previewImagens(input) {
+    const container = document.getElementById('preview-imagens');
+    container.innerHTML = '';
+
+    if (input.files.length > 5) {
+        alert('Máximo de 5 imagens.');
+        input.value = '';
+        return;
+    }
+
+    Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'w-20 h-20 object-cover rounded-xl border border-gray-200';
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+</script>
+@endpush
 @endsection

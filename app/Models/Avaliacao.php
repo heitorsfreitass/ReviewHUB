@@ -19,7 +19,7 @@ class Avaliacao extends Model
     protected $fillable = [
         'produto_id', 'user_id', 'nota', 'titulo',
         'conteudo', 'preco_pago', 'loja', 'url_loja',
-        'recomenda', 'votos_uteis',
+        'recomenda', 'votos_uteis', 'imagens',
     ];
 
     protected function casts(): array
@@ -29,6 +29,7 @@ class Avaliacao extends Model
             'preco_pago' => 'decimal:2',
             'recomenda'  => 'boolean',
             'votos_uteis'=> 'integer',
+            'imagens'    => 'array',
         ];
     }
 
@@ -94,5 +95,11 @@ class Avaliacao extends Model
         static::deleted(function (Avaliacao $av) {
             $av->produto->recalcularEstatisticas();
         });
+    }
+
+    public function getImagensUrlsAttribute(): array
+    {
+        if (!$this->imagens) return [];
+        return array_map(fn($path) => asset('storage/' . $path), $this->imagens);
     }
 }

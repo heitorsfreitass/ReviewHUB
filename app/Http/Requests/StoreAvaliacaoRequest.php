@@ -32,6 +32,8 @@ class StoreAvaliacaoRequest extends FormRequest
                     ->where('user_id', auth()->id())
                     ->ignore($this->route('avaliacao')?->id),
             ],
+            'images'     => ['nullable', 'array', 'max:5'],
+            'imagens.*'  => ['image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -47,6 +49,10 @@ class StoreAvaliacaoRequest extends FormRequest
             'conteudo.min'       => 'A avaliação precisa ter pelo menos 20 caracteres.',
             'url_loja.url'       => 'Informe uma URL válida para a loja.',
             'produto_id.unique'  => 'Você já avaliou este produto.',
+            'imagens.max'        => 'Máximo de 5 imagens por avaliaão.',
+            'imagens.*.image'    => 'Todos os arquivos devem ser imagens',
+            'imagens.*.mimes'    => 'Formatos aceitos: JPG, PNG, WEBP.',
+            'imagens.*.max'      => 'Cada imagem pode ter no máximo 2MB.'
         ];
     }
 
