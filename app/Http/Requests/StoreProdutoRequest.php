@@ -5,15 +5,11 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * CONCEITO: Form Requests
- * -----------------------
- * Encapsulam validação e autorização fora do Controller.
  * O Controller fica limpo — só recebe $request já validado.
- *
- * authorize() → retorna true se o usuário PODE fazer a ação
- * rules()     → regras de validação do Laravel Validator
- * messages()  → mensagens de erro customizadas em pt-BR
- * attributes()→ nomes amigáveis para os campos nos erros
+ * authorize() → true se o usuário pode fazer a ação
+ * rules()     → Laravel Validator
+ * messages()  → mensagens de erro
+ * attributes()→ nomes dos campos nos erros
  */
 class StoreProdutoRequest extends FormRequest
 {

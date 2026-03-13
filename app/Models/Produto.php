@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * CONCEITO: Model com relacionamentos, accessors, scopes e eventos
- *
  * @property int $id
  * @property string $nome
  * @property string $slug
@@ -34,11 +32,7 @@ class Produto extends Model
         ];
     }
 
-    // =========================================================
     // Relacionamentos
-    // =========================================================
-
-    /** belongsTo = "pertence a" (a FK está nesta tabela) */
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
@@ -54,12 +48,7 @@ class Produto extends Model
         return $this->hasMany(Avaliacao::class);
     }
 
-    // =========================================================
-    // CONCEITO: Local Scopes
     // Scopes encapsulam filtros reutilizáveis.
-    // Uso: Produto::maisAvaliados()->get()
-    // =========================================================
-
     public function scopeMaisAvaliados($query)
     {
         return $query->orderByDesc('total_avaliacoes');
@@ -90,12 +79,6 @@ class Produto extends Model
         });
     }
 
-    // =========================================================
-    // CONCEITO: Accessors & Mutators
-    // Accessors: leitura computada (get...Attribute)
-    // Mutators: transformação ao gravar (set...Attribute)
-    // =========================================================
-
     public function getImagemUrlAttribute(): string
     {
         return asset('storage/' . $this->imagem);
@@ -110,11 +93,6 @@ class Produto extends Model
     {
         return 'slug';
     }
-
-    // =========================================================
-    // CONCEITO: Model Events / Boot
-    // Hooks que disparam em eventos do ciclo de vida do Model.
-    // =========================================================
 
     protected static function boot(): void
     {

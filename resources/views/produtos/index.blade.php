@@ -1,153 +1,151 @@
 @extends('layouts.app')
-
 @section('title', 'Produtos')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="container py-4">
+    <div class="row g-4">
 
-    <div class="flex flex-col md:flex-row gap-8">
+        <!-- SIDEBAR -->
+        <div class="col-lg-3">
+            <div class="rh-filter-sidebar">
+                <form action="{{ route('produtos.index') }}" method="GET">
 
-        {{-- SIDEBAR DE FILTROS --}}
-        <aside class="w-full md:w-64 flex-shrink-0">
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 sticky top-20">
-                <h3 class="font-semibold mb-4">🔎 Filtros</h3>
+                    <p class="rh-filter-title">
+                        <i class="bi bi-funnel me-1"></i> Filtros
+                    </p>
 
-                <form action="{{ route('produtos.index') }}" method="GET" id="form-filtros">
-
-                    {{-- Busca --}}
-                    <div class="mb-5">
-                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Buscar
-                        </label>
+                    <!-- Busca -->
+                    <div class="mb-4">
+                        <label class="rh-filter-title">Buscar</label>
                         <input type="text" name="busca" value="{{ request('busca') }}"
-                               placeholder="Nome, marca..."
-                               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                            class="rh-form-control" placeholder="Nome, marca...">
                     </div>
 
-                    {{-- Categorias --}}
-                    <div class="mb-5">
-                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Categoria
-                        </label>
-                        <div class="space-y-1 max-h-60 overflow-y-auto">
-                            {{--
-                                CONCEITO: request()->is() e request('param')
-                                request('categoria') lê o ?categoria= da URL atual
-                                Comparamos para marcar o item ativo
-                            --}}
-                            <a href="{{ route('produtos.index', array_merge(request()->except('categoria', 'page'), [])) }}"
-                               class="flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition
-                                      {{ !request('categoria') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <!-- Categorias -->
+                    <div class="mb-4">
+                        <label class="rh-filter-title">Categoria</label>
+                        <div style="max-height: 260px; overflow-y: auto;">
+                            <a href="{{ route('produtos.index', array_merge(request()->except('categoria','page'), [])) }}"
+                                class="rh-filter-link {{ !request('categoria') ? 'active' : '' }}">
                                 <span>Todas</span>
                             </a>
                             @foreach($categorias as $cat)
-                                <a href="{{ route('produtos.index', array_merge(request()->except('categoria', 'page'), ['categoria' => $cat->slug])) }}"
-                                   class="flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition
-                                          {{ request('categoria') === $cat->slug ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <span>{{ $cat->icone }} {{ $cat->nome }}</span>
-                                    <span class="text-xs text-gray-400">{{ $cat->produtos_count }}</span>
-                                </a>
+                            <a href="{{ route('produtos.index', array_merge(request()->except('categoria','page'), ['categoria' => $cat->slug])) }}"
+                                class="rh-filter-link {{ request('categoria') === $cat->slug ? 'active' : '' }}">
+                                <span>{{ $cat->icone }} {{ $cat->nome }}</span>
+                                <span class="fs-xs text-rh-muted">{{ $cat->produtos_count }}</span>
+                            </a>
                             @endforeach
                         </div>
                     </div>
 
-                    {{-- Ordenação --}}
-                    <div class="mb-5">
-                        <label class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Ordenar por
-                        </label>
-                        <select name="ordem" onchange="this.form.submit()"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                            <option value="recentes"       {{ request('ordem', 'recentes') === 'recentes'       ? 'selected' : '' }}>Mais recentes</option>
+                    <!-- Ordenação -->
+                    <div class="mb-4">
+                        <label class="rh-filter-title">Ordenar por</label>
+                        <select name="ordem" class="rh-form-control" onchange="this.form.submit()">
+                            <option value="recentes" {{ request('ordem','recentes') === 'recentes'       ? 'selected' : '' }}>Mais recentes</option>
                             <option value="mais_avaliados" {{ request('ordem') === 'mais_avaliados' ? 'selected' : '' }}>Mais avaliados</option>
-                            <option value="melhor_nota"    {{ request('ordem') === 'melhor_nota'    ? 'selected' : '' }}>Melhor nota</option>
+                            <option value="melhor_nota" {{ request('ordem') === 'melhor_nota'    ? 'selected' : '' }}>Melhor nota</option>
                         </select>
                     </div>
 
-                    <button type="submit"
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium transition">
-                        Aplicar filtros
+                    <button type="submit" class="btn-rh-primary w-100 justify-content-center">
+                        <i class="bi bi-search"></i> Aplicar
                     </button>
 
-                    @if(request()->hasAny(['busca', 'categoria', 'ordem']))
-                        <a href="{{ route('produtos.index') }}"
-                           class="block text-center mt-2 text-sm text-gray-400 hover:text-red-500">
-                            Limpar filtros
-                        </a>
+                    @if(request()->hasAny(['busca','categoria','ordem']))
+                    <a href="{{ route('produtos.index') }}"
+                        class="d-block text-center mt-2 fs-xs text-rh-muted">
+                        <i class="bi bi-x-circle"></i> Limpar filtros
+                    </a>
                     @endif
+
                 </form>
             </div>
-        </aside>
+        </div>
 
-        {{-- GRID DE PRODUTOS --}}
-        <div class="flex-1">
+        <!-- GRID -->
+        <div class="col-lg-9">
 
-            {{-- Cabeçalho dos resultados --}}
-            <div class="flex items-center justify-between mb-6">
+            <!-- Cabeçalho -->
+            <div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-900">
+                    <h1 class="h4 fw-700 mb-0">
                         @if(request('busca'))
-                            Resultados para "{{ request('busca') }}"
+                        Resultados para "{{ request('busca') }}"
                         @elseif(request('categoria'))
-                            {{ $categorias->firstWhere('slug', request('categoria'))?->icone }}
-                            {{ $categorias->firstWhere('slug', request('categoria'))?->nome }}
+                        {{ $categorias->firstWhere('slug', request('categoria'))?->icone }}
+                        {{ $categorias->firstWhere('slug', request('categoria'))?->nome }}
                         @else
-                            Todos os produtos
+                        Todos os produtos
                         @endif
                     </h1>
-                    <p class="text-sm text-gray-500 mt-0.5">
-                        {{ $produtos->total() }} {{ Str::plural('produto', $produtos->total()) }} encontrado{{ $produtos->total() !== 1 ? 's' : '' }}
+                    <p class="fs-xs text-rh-muted mb-0">
+                        {{ $produtos->total() }} produto(s) encontrado(s)
                     </p>
                 </div>
-                <a href="{{ route('produtos.create') }}"
-                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full text-sm font-medium transition">
-                    + Cadastrar
+                <a href="{{ route('produtos.create') }}" class="btn-rh-primary">
+                    <i class="bi bi-plus-lg"></i> Cadastrar
                 </a>
             </div>
 
-            {{--
-                CONCEITO: @forelse
-                Como @foreach, mas com @empty para quando a coleção estiver vazia.
-                Muito mais limpo que um @if($collection->isEmpty()) separado.
-            --}}
+            <!-- Produtos -->
             @forelse($produtos as $produto)
-                @if($loop->first)
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            @if($loop->first)
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-xl-4 g-3">
                 @endif
 
-                <x-produto-card :produto="$produto" />
+                <div class="col">
+                    <x-produto-card :produto="$produto" />
+                </div>
 
                 @if($loop->last)
-                    </div>
-                @endif
+            </div>
+            @endif
             @empty
-                <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
-                    <p class="text-5xl mb-4">🔍</p>
-                    <h3 class="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
-                    <p class="text-gray-500 text-sm mb-6">
-                        @if(request('busca'))
-                            Nenhum resultado para "{{ request('busca') }}". Que tal cadastrá-lo?
-                        @else
-                            Ainda não há produtos nesta categoria.
-                        @endif
-                    </p>
-                    <a href="{{ route('produtos.create') }}"
-                       class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition">
-                        + Cadastrar Produto
-                    </a>
-                </div>
+            <div class="rh-card text-center py-5 px-4">
+                <i class="bi bi-search" style="font-size:3rem; color: var(--rh-muted);"></i>
+                <h4 class="fw-700 mt-3 mb-2">Nenhum produto encontrado</h4>
+                <p class="text-rh-muted fs-sm mb-4">
+                    @if(request('busca'))
+                    Nenhum resultado para "{{ request('busca') }}". Que tal cadastrá-lo?
+                    @else
+                    Ainda não há produtos nesta categoria.
+                    @endif
+                </p>
+                <a href="{{ route('produtos.create') }}" class="btn-rh-primary">
+                    <i class="bi bi-plus-lg"></i> Cadastrar Produto
+                </a>
+            </div>
             @endforelse
 
-            {{--
-                CONCEITO: Paginação
-                $produtos->links() renderiza os botões de página.
-                O Laravel gera automaticamente URLs com ?page=N.
-                withQueryString() mantém os outros filtros na URL.
-            --}}
+            <!-- Paginação -->
             @if($produtos->hasPages())
-                <div class="mt-8">
-                    {{ $produtos->links() }}
-                </div>
+            <div class="mt-4 d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination rh-pagination">
+                        {{-- Previous --}}
+                        <li class="page-item {{ $produtos->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $produtos->previousPageUrl() }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @foreach($produtos->getUrlRange(1, $produtos->lastPage()) as $page => $url)
+                        <li class="page-item {{ $page == $produtos->currentPage() ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                        </li>
+                        @endforeach
+
+                        {{-- Next --}}
+                        <li class="page-item {{ !$produtos->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $produtos->nextPageUrl() }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
             @endif
         </div>
     </div>

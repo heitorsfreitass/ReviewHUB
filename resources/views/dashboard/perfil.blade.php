@@ -2,92 +2,122 @@
 @section('title', 'Meu Perfil')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+<div class="container py-4">
+    <div class="row g-4">
 
-    {{-- Header do perfil --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex items-center gap-6">
-        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
-             class="w-20 h-20 rounded-full object-cover">
-        <div>
-            <h1 class="text-2xl font-bold">{{ $user->name }}</h1>
-            <p class="text-gray-500">{{ $user->email }}</p>
-            <div class="flex gap-4 mt-2 text-sm text-gray-500">
-                <span>📦 {{ $user->produtos()->count() }} produtos cadastrados</span>
-                <span>⭐ {{ $user->avaliacoes()->count() }} avaliações escritas</span>
+        <!-- Coluna esquerda: dados do usuário -->
+        <div class="col-lg-4">
+
+            <!-- Card perfil -->
+            <div class="rh-card p-4 text-center mb-4">
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                    style="width:80px;height:80px;border-radius:50%;object-fit:cover;" class="mb-3">
+                <h2 class="h5 fw-700 mb-0">{{ $user->name }}</h2>
+                <p class="text-rh-muted fs-sm mb-3">{{ $user->email }}</p>
+                <div class="d-flex justify-content-center gap-4">
+                    <div class="text-center">
+                        <div class="fw-700">{{ $user->produtos()->count() }}</div>
+                        <div class="fs-xs text-rh-muted">Produtos</div>
+                    </div>
+                    <div style="border-left:1px solid var(--rh-border);"></div>
+                    <div class="text-center">
+                        <div class="fw-700">{{ $user->avaliacoes()->count() }}</div>
+                        <div class="fs-xs text-rh-muted">Avaliações</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editar dados -->
+            <div class="rh-card p-4">
+                <h3 class="h6 fw-700 mb-3">
+                    <i class="bi bi-pencil text-rh-primary me-1"></i> Editar dados
+                </h3>
+                <form action="{{ route('profile.update') }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="mb-3">
+                        <label class="rh-form-label">Nome</label>
+                        <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                            class="rh-form-control {{ $errors->has('name') ? 'is-invalid' : '' }}">
+                        @error('name') <div class="rh-invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="rh-form-label">E-mail</label>
+                        <input type="email" name="email" value="{{ old('email', $user->email) }}"
+                            class="rh-form-control {{ $errors->has('email') ? 'is-invalid' : '' }}">
+                        @error('email') <div class="rh-invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <button type="submit" class="btn-rh-primary w-100 justify-content-center">
+                        <i class="bi bi-check-lg"></i> Salvar
+                    </button>
+                </form>
             </div>
         </div>
-    </div>
 
-    {{-- Editar dados --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-        <h2 class="font-bold text-lg mb-5">✏️ Editar dados</h2>
-        <form action="{{ route('profile.update') }}" method="POST" class="space-y-4 max-w-md">
-            @csrf
-            @method('PATCH')
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                       class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                       class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition">
-                Salvar
-            </button>
-        </form>
-    </div>
+        <!-- Coluna direita: histórico -->
+        <div class="col-lg-8">
 
-    {{-- Minhas avaliações --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-        <h2 class="font-bold text-lg mb-5">⭐ Minhas avaliações</h2>
-        @forelse($avaliacoes as $av)
-            <div class="flex items-start gap-4 py-4 border-b border-gray-50 last:border-0">
-                <img src="{{ $av->produto->imagem_url }}" alt="{{ $av->produto->nome }}"
-                     class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
-                <div class="flex-1 min-w-0">
-                    <a href="{{ route('produtos.show', $av->produto) }}"
-                       class="font-medium text-sm hover:text-indigo-600 truncate block">
-                        {{ $av->produto->nome }}
-                    </a>
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <x-estrelas :nota="$av->nota" tamanho="sm" />
-                        <span class="text-xs text-gray-500">{{ $av->titulo }}</span>
+            <!-- Minhas avaliações -->
+            <div class="rh-card p-4 mb-4">
+                <h3 class="h6 fw-700 mb-3">
+                    <i class="bi bi-star-fill text-rh-accent me-1"></i> Minhas avaliações
+                </h3>
+
+                @forelse($avaliacoes as $av)
+                <div class="d-flex align-items-start gap-3 py-3 border-bottom">
+                    <img src="{{ $av->produto->imagem_url }}" alt="{{ $av->produto->nome }}"
+                        style="width:48px;height:48px;object-fit:cover;border-radius:var(--rh-radius);flex-shrink:0;">
+                    <div class="flex-fill min-w-0">
+                        <a href="{{ route('produtos.show', $av->produto) }}"
+                            class="fw-600 fs-sm d-block text-truncate">
+                            {{ $av->produto->nome }}
+                        </a>
+                        <div class="d-flex align-items-center gap-2 mt-0.5">
+                            <x-estrelas :nota="$av->nota" tamanho="sm" />
+                            <span class="fs-xs text-rh-muted">{{ $av->titulo }}</span>
+                        </div>
+                        <div class="fs-xs text-rh-muted">{{ $av->created_at->diffForHumans() }}</div>
                     </div>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ $av->created_at->diffForHumans() }}</p>
+                    <a href="{{ route('produtos.avaliacoes.edit', [$av->produto, $av]) }}"
+                        class="fs-xs text-rh-primary flex-shrink-0">Editar</a>
                 </div>
-                <a href="{{ route('produtos.avaliacoes.edit', [$av->produto, $av]) }}"
-                   class="text-xs text-indigo-600 hover:underline flex-shrink-0">Editar</a>
-            </div>
-        @empty
-            <p class="text-gray-400 text-sm">Você ainda não escreveu nenhuma avaliação.</p>
-        @endforelse
-        {{ $avaliacoes->links() }}
-    </div>
+                @empty
+                <p class="text-rh-muted fs-sm mb-0">Você ainda não escreveu nenhuma avaliação.</p>
+                @endforelse
 
-    {{-- Produtos que cadastrei --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-        <h2 class="font-bold text-lg mb-5">📦 Produtos que cadastrei</h2>
-        @forelse($produtos as $p)
-            <div class="flex items-center gap-4 py-3 border-b border-gray-50 last:border-0">
-                <img src="{{ $p->imagem_url }}" alt="{{ $p->nome }}"
-                     class="w-10 h-10 object-cover rounded-lg flex-shrink-0">
-                <div class="flex-1 min-w-0">
-                    <a href="{{ route('produtos.show', $p) }}"
-                       class="font-medium text-sm hover:text-indigo-600 truncate block">{{ $p->nome }}</a>
-                    <p class="text-xs text-gray-400">{{ $p->categoria->nome }} · {{ $p->total_avaliacoes }} avaliações</p>
+                <div class="mt-3">{{ $avaliacoes->links() }}</div>
+            </div>
+
+            <!-- Meus produtos -->
+            <div class="rh-card p-4">
+                <h3 class="h6 fw-700 mb-3">
+                    <i class="bi bi-box-seam text-rh-primary me-1"></i> Produtos que cadastrei
+                </h3>
+
+                @forelse($produtos as $p)
+                <div class="d-flex align-items-center gap-3 py-3 border-bottom">
+                    <img src="{{ $p->imagem_url }}" alt="{{ $p->nome }}"
+                        style="width:42px;height:42px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+                    <div class="flex-fill min-w-0">
+                        <a href="{{ route('produtos.show', $p) }}"
+                            class="fw-600 fs-sm d-block text-truncate">{{ $p->nome }}</a>
+                        <div class="fs-xs text-rh-muted">
+                            {{ $p->categoria->nome }} &middot; {{ $p->total_avaliacoes }} avaliação(ões)
+                        </div>
+                    </div>
+                    <a href="{{ route('produtos.edit', $p) }}" class="fs-xs text-rh-primary flex-shrink-0">Editar</a>
                 </div>
-                <a href="{{ route('produtos.edit', $p) }}" class="text-xs text-indigo-600 hover:underline">Editar</a>
-            </div>
-        @empty
-            <p class="text-gray-400 text-sm">Você ainda não cadastrou nenhum produto.</p>
-        @endforelse
-        {{ $produtos->links() }}
-    </div>
+                @empty
+                <p class="text-rh-muted fs-sm mb-0">Você ainda não cadastrou nenhum produto.</p>
+                @endforelse
 
+                <div class="mt-3">{{ $produtos->links() }}</div>
+            </div>
+
+        </div>
+    </div>
 </div>
 @endsection

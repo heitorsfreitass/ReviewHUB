@@ -9,18 +9,11 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * CONCEITO: Seeders
- * -----------------
- * Populam o banco com dados de teste/exemplo.
- * Rode com: php artisan db:seed
- * Ou junto com migrate: php artisan migrate:fresh --seed
- */
+// SEEDS PARA TESTES SOMENTE
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuários de teste
         $admin = User::create([
             'name'     => 'Admin ReviewHub',
             'email'    => 'admin@reviewhub.com',
@@ -34,7 +27,6 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Ana Lima',     'email' => 'ana@email.com'],
         ])->map(fn($u) => User::create([...$u, 'password' => Hash::make('password')]));
 
-        // Categorias
         $cats = [
             ['nome' => 'Eletrônicos',      'icone' => '💻', 'slug' => 'eletronicos'],
             ['nome' => 'Celulares',        'icone' => '📱', 'slug' => 'celulares'],
@@ -52,7 +44,6 @@ class DatabaseSeeder extends Seeder
             Categoria::create($cat);
         }
 
-        // Produtos de exemplo
         $produtos = [
             ['nome' => 'iPhone 15 Pro Max',     'marca' => 'Apple',   'categoria' => 'celulares'],
             ['nome' => 'Galaxy S24 Ultra',       'marca' => 'Samsung', 'categoria' => 'celulares'],
@@ -76,7 +67,6 @@ class DatabaseSeeder extends Seeder
                 'imagem'       => 'produtos/placeholder.jpg',
             ]);
 
-            // Cria 2-4 avaliações por produto
             $avaliadores = $usuarios->shuffle()->take(rand(2, 4));
             foreach ($avaliadores as $avaliador) {
                 if ($avaliador->id === $criador->id) continue;
@@ -89,11 +79,11 @@ class DatabaseSeeder extends Seeder
                     'conteudo'   => "Comprei há alguns meses e estou muito satisfeito. O produto chegou bem embalado, dentro do prazo. A qualidade é excelente para o preço pago. Recomendo a todos que estão pensando em comprar.",
                     'preco_pago' => rand(50, 5000) + rand(0, 99) / 100,
                     'loja'       => ['Amazon', 'Mercado Livre', 'Magazine Luiza', 'Americanas'][rand(0, 3)],
-                    'recomenda'  => rand(0, 4) > 0, // 80% recomenda
+                    'recomenda'  => rand(0, 4) > 0,
                 ]);
             }
         }
 
-        $this->command->info('✅ Banco populado! Login: admin@reviewhub.com / password');
+        $this->command->info('banco seedado! Login: admin@reviewhub.com / password');
     }
 }

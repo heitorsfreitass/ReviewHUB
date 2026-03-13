@@ -7,14 +7,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /**
- * CONCEITO: Rotas do Laravel
- * --------------------------
- * Route::get/post/put/patch/delete → verbos HTTP
- * Route::resource() → gera automaticamente as 7 rotas REST
- * middleware('auth') → exige autenticação
- * ->name() → nomeia a rota para uso no Blade/Controller
- *
- * Nomes das rotas do resource 'produtos':
  *   produtos.index   → GET  /produtos
  *   produtos.create  → GET  /produtos/create
  *   produtos.store   → POST /produtos
@@ -24,10 +16,8 @@ use Illuminate\Support\Facades\Route;
  *   produtos.destroy → DELETE /produtos/{produto}
  */
 
-// Página inicial
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Produtos — leitura é pública, escrita exige login
 Route::resource('produtos', ProdutoController::class)
     ->only(['index', 'show']);
 
@@ -35,7 +25,6 @@ Route::resource('produtos', ProdutoController::class)
     ->except(['index', 'show'])
     ->middleware('auth');
 
-// Avaliações — rotas aninhadas: /produtos/{produto}/avaliacoes/...
 Route::prefix('produtos/{produto}/avaliacoes')
     ->name('produtos.avaliacoes.')
     ->middleware('auth')
@@ -47,17 +36,14 @@ Route::prefix('produtos/{produto}/avaliacoes')
         Route::delete('{avaliacao}',   [AvaliacaoController::class, 'destroy'])->name('destroy');
     });
 
-// Toggle "útil" — pode ser AJAX
 Route::post('avaliacoes/{avaliacao}/util', [AvaliacaoController::class, 'toggleUtil'])
     ->name('avaliacoes.util')
     ->middleware('auth');
 
-// Perfil do usuário (Breeze gera estes)
 Route::middleware('auth')->group(function () {
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Rotas de autenticação geradas pelo Breeze
 require __DIR__.'/auth.php';

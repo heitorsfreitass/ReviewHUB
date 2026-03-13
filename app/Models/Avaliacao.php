@@ -5,11 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * CONCEITO: Model Events com lógica de negócio
- * Após salvar/apagar uma avaliação, recalculamos as estatísticas do produto.
- * Isso mantém os campos desnormalizados (media_nota, total_avaliacoes) sempre corretos.
- */
 class Avaliacao extends Model
 {
     use HasFactory;
@@ -33,10 +28,7 @@ class Avaliacao extends Model
         ];
     }
 
-    // =========================================================
     // Relacionamentos
-    // =========================================================
-
     public function produto()
     {
         return $this->belongsTo(Produto::class);
@@ -51,11 +43,6 @@ class Avaliacao extends Model
     {
         return $this->hasMany(VotoUtilidade::class);
     }
-
-    // =========================================================
-    // Accessor: estrelas como array de booleans (para Blade)
-    // Uso: @foreach($avaliacao->estrelas as $preenchida)
-    // =========================================================
 
     public function getEstrelasAttribute(): array
     {
@@ -80,10 +67,7 @@ class Avaliacao extends Model
         return 'R$ ' . number_format($this->preco_pago, 2, ',', '.');
     }
 
-    // =========================================================
-    // Model Events: recalcula estatísticas do produto
-    // =========================================================
-
+    // recalcula estatísticas do produto
     protected static function boot(): void
     {
         parent::boot();

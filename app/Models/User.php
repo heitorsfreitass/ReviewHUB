@@ -8,16 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * CONCEITO: Eloquent Model
- * -------------------------
- * Cada Model representa uma tabela. O Eloquent usa convenções:
- * - User       → tabela "users"
- * - Produto    → tabela "produtos"
- * - Avaliacao  → tabela "avaliacoes"
- *
- * $fillable protege contra mass-assignment (vulnerabilidade onde
- * um atacante enviaria campos extras como "admin=1").
- *
  * @property int $id
  * @property string $name
  * @property string $email
@@ -48,34 +38,21 @@ class User extends Authenticatable
         ];
     }
 
-    // =========================================================
-    // CONCEITO: Relacionamentos Eloquent
-    // hasMany = "tem muitos" (chave estrangeira na outra tabela)
-    // =========================================================
-
-    /** Um usuário cadastrou muitos produtos */
     public function produtos()
     {
         return $this->hasMany(Produto::class);
     }
 
-    /** Um usuário escreveu muitas avaliações */
     public function avaliacoes()
     {
         return $this->hasMany(Avaliacao::class);
     }
 
-    /** Avaliações que o usuário marcou como úteis */
     public function votosUteis()
     {
         return $this->hasMany(VotoUtilidade::class);
     }
 
-    // =========================================================
-    // Accessors — propriedades computadas
-    // =========================================================
-
-    /** URL do avatar ou placeholder com iniciais */
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {

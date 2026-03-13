@@ -9,10 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * CONCEITO: Resource Controller
- * ------------------------------
- * Segue a convenção RESTful do Laravel:
- *
  * index()   → GET  /produtos              → listar todos
  * create()  → GET  /produtos/create       → formulário de criação
  * store()   → POST /produtos              → salvar novo
@@ -21,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
  * update()  → PUT  /produtos/{produto}    → salvar edição
  * destroy() → DELETE /produtos/{produto}  → apagar
  *
- * Registrado com: Route::resource('produtos', ProdutoController::class)
+ * Route::resource('produtos', ProdutoController::class)
  */
 class ProdutoController extends Controller
 {
@@ -63,13 +59,11 @@ class ProdutoController extends Controller
     public function store(StoreProdutoRequest $request)
     {
         /**
-         * CONCEITO: Upload de arquivos
          * $request->file('imagem') retorna um UploadedFile
          * ->store('produtos', 'public') salva em storage/app/public/produtos/
-         * e retorna o path relativo ex: "produtos/abc123.jpg"
-         *
-         * Para servir via URL pública: php artisan storage:link
-         * Cria um symlink de public/storage → storage/app/public
+         * e retorna o path relativo
+         * pra funfar em url pub: php artisan storage:link
+         * Cria um link simbólico public/storage → storage/app/public
          */
         $imagemPath = $request->file('imagem')->store('produtos', 'public');
 
@@ -86,14 +80,6 @@ class ProdutoController extends Controller
 
     public function show(Produto $produto)
     {
-        /**
-         * CONCEITO: Eager Loading com with()
-         * Carrega os relacionamentos em UMA query extra,
-         * evitando o problema N+1 (1 query por avaliação).
-         *
-         * Com Eager Loading:   2 queries
-         * Sem Eager Loading:   1 + N queries (N = nº de avaliações)
-         */
         $produto->load([
             'categoria',
             'user',

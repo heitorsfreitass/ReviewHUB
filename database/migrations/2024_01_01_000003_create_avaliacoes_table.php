@@ -31,17 +31,11 @@ return new class extends Migration
 
             $table->timestamps();
 
-            /**
-             * CONCEITO: Unique composto
-             * Um usuário só pode ter UMA avaliação por produto.
-             */
+            /** Um usuário só pode ter 1 avaliação por produto. */
             $table->unique(['produto_id', 'user_id']);
         });
 
-        /**
-         * Tabela pivot: usuários que marcaram uma avaliação como "útil"
-         * Evita que o mesmo usuário vote várias vezes.
-         */
+        /**Evita que o mesmo usuário vote várias vezes.*/
         Schema::create('votos_utilidade', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('avaliacao_id');

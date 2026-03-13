@@ -18,7 +18,7 @@ class Categoria extends Model
 
     public function getRouteKeyName(): string
     {
-        // CONCEITO: Route Model Binding por slug em vez de ID
+        // slug em vez de ID
         // /categorias/eletronicos em vez de /categorias/3
         return 'slug';
     }

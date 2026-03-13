@@ -25,8 +25,8 @@ class StoreAvaliacaoRequest extends FormRequest
             'url_loja'   => ['nullable', 'url', 'max:500'],
             'recomenda'  => ['required', 'boolean'],
 
-            // Garante unicidade: 1 review por usuário por produto
-            // Rule::unique com where() é mais expressivo que unique:avaliacoes,produto_id
+            // 1 review por usuário por produto
+            // unique com where()
             'produto_id' => [
                 Rule::unique('avaliacoes', 'produto_id')
                     ->where('user_id', auth()->id())

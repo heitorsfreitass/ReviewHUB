@@ -1,170 +1,125 @@
 @extends('layouts.app')
-
 @section('title', 'Cadastrar Produto')
 
 @section('content')
-<div class="max-w-2xl mx-auto px-4 py-10">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
 
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold">📦 Cadastrar novo produto</h1>
-        <p class="text-gray-500 mt-1">Não achou o produto que você quer avaliar? Cadastre-o aqui.</p>
-    </div>
-
-    {{--
-        CONCEITO: enctype="multipart/form-data"
-        Obrigatório para formulários com upload de arquivo.
-        Sem isso, o arquivo não é enviado ao servidor.
-    --}}
-    <form action="{{ route('produtos.store') }}" method="POST" enctype="multipart/form-data"
-          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
-        {{--
-            CONCEITO: @csrf
-            Proteção contra Cross-Site Request Forgery.
-            Gera um campo hidden com token único por sessão.
-            O Laravel valida esse token em todo POST/PUT/DELETE.
-            SEM @csrf o formulário retorna erro 419.
-        --}}
-        @csrf
-
-        {{-- Nome --}}
-        <div>
-            <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">
-                Nome do produto <span class="text-red-500">*</span>
-            </label>
-            {{--
-                CONCEITO: old('campo')
-                Recupera o valor enviado anteriormente se a validação falhar.
-                O usuário não perde o que digitou.
-            --}}
-            <input type="text" id="nome" name="nome" value="{{ old('nome') }}"
-                   placeholder="Ex: iPhone 15 Pro Max, Tênis Nike Air Max..."
-                   class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300
-                          {{ $errors->has('nome') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">
-            {{--
-                CONCEITO: $errors e @error
-                $errors é uma ViewErrorBag injetada automaticamente pelo Laravel.
-                @error('campo') exibe a mensagem de erro do campo específico.
-            --}}
-            @error('nome')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Marca --}}
-        <div>
-            <label for="marca" class="block text-sm font-medium text-gray-700 mb-1">
-                Marca <span class="text-gray-400 text-xs">(opcional)</span>
-            </label>
-            <input type="text" id="marca" name="marca" value="{{ old('marca') }}"
-                   placeholder="Ex: Apple, Samsung, Nike..."
-                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-            @error('marca')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Categoria --}}
-        <div>
-            <label for="categoria_id" class="block text-sm font-medium text-gray-700 mb-1">
-                Categoria <span class="text-red-500">*</span>
-            </label>
-            <select id="categoria_id" name="categoria_id"
-                    class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300
-                           {{ $errors->has('categoria_id') ? 'border-red-400 bg-red-50' : 'border-gray-200' }}">
-                <option value="">Selecione uma categoria...</option>
-                @foreach($categorias as $categoria)
-                    <option value="{{ $categoria->id }}"
-                            {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
-                        {{ $categoria->icone }} {{ $categoria->nome }}
-                    </option>
-                @endforeach
-            </select>
-            @error('categoria_id')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Descrição --}}
-        <div>
-            <label for="descricao" class="block text-sm font-medium text-gray-700 mb-1">
-                Descrição breve <span class="text-gray-400 text-xs">(opcional)</span>
-            </label>
-            <textarea id="descricao" name="descricao" rows="3"
-                      placeholder="O que é esse produto? Para que serve?"
-                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none">{{ old('descricao') }}</textarea>
-            @error('descricao')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Upload de imagem --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Foto do produto <span class="text-red-500">*</span>
-            </label>
-            <p class="text-xs text-gray-400 mb-3">
-                Use uma foto clara do produto para facilitar identificação. JPG, PNG ou WEBP · Máx. 4MB
-            </p>
-
-            {{-- Preview da imagem antes do upload --}}
-            <div id="preview-container" class="hidden mb-3">
-                <img id="preview-img" src="" alt="Preview"
-                     class="w-32 h-32 object-cover rounded-xl border border-gray-200">
+            <div class="mb-4">
+                <h1 class="h3 fw-700">
+                    <i class="bi bi-box-seam text-rh-primary me-2"></i>Cadastrar novo produto
+                </h1>
+                <p class="text-rh-muted fs-sm">Não achou o produto que quer avaliar? Cadastre-o aqui.</p>
             </div>
 
-            <label for="imagem"
-                   class="flex items-center justify-center gap-3 w-full border-2 border-dashed rounded-xl px-4 py-8 cursor-pointer transition
-                          {{ $errors->has('imagem') ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-indigo-400 hover:bg-indigo-50' }}">
-                <span class="text-3xl">📸</span>
-                <div class="text-center">
-                    <p class="text-sm font-medium text-gray-700" id="upload-label">Clique para selecionar a imagem</p>
-                    <p class="text-xs text-gray-400">ou arraste e solte aqui</p>
-                </div>
-                <input type="file" id="imagem" name="imagem" accept="image/*" class="hidden"
-                       onchange="previewImagem(this)">
-            </label>
-            @error('imagem')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+            <div class="rh-card p-4 p-md-5">
+                <form action="{{ route('produtos.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-        {{-- Botões --}}
-        <div class="flex items-center gap-4 pt-2">
-            <button type="submit"
-                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-medium transition">
-                Cadastrar Produto
-            </button>
-            <a href="{{ route('produtos.index') }}"
-               class="flex-1 text-center border border-gray-200 text-gray-600 hover:bg-gray-50 py-3 rounded-xl text-sm transition">
-                Cancelar
-            </a>
+                    <!-- Nome -->
+                    <div class="mb-4">
+                        <label class="rh-form-label">Nome do produto <span class="text-danger">*</span></label>
+                        <input type="text" name="nome" value="{{ old('nome') }}"
+                            placeholder="Ex: iPhone 15 Pro Max, Tênis Nike Air Max..."
+                            class="rh-form-control {{ $errors->has('nome') ? 'is-invalid' : '' }}">
+                        @error('nome')
+                        <div class="rh-invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Marca -->
+                    <div class="mb-4">
+                        <label class="rh-form-label">
+                            Marca <span class="text-rh-muted fw-400 fs-xs">(opcional)</span>
+                        </label>
+                        <input type="text" name="marca" value="{{ old('marca') }}"
+                            placeholder="Ex: Apple, Samsung, Nike..."
+                            class="rh-form-control">
+                    </div>
+
+                    <!-- Categoria -->
+                    <div class="mb-4">
+                        <label class="rh-form-label">Categoria <span class="text-danger">*</span></label>
+                        <select name="categoria_id"
+                            class="rh-form-control {{ $errors->has('categoria_id') ? 'is-invalid' : '' }}">
+                            <option value="">Selecione uma categoria...</option>
+                            @foreach($categorias as $categoria)
+                            <option value="{{ $categoria->id }}"
+                                {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                {{ $categoria->icone }} {{ $categoria->nome }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('categoria_id')
+                        <div class="rh-invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="mb-4">
+                        <label class="rh-form-label">
+                            Descrição <span class="text-rh-muted fw-400 fs-xs">(opcional)</span>
+                        </label>
+                        <textarea name="descricao" rows="3"
+                            placeholder="O que é esse produto? Para que serve?"
+                            class="rh-form-control" style="resize:none;">{{ old('descricao') }}</textarea>
+                    </div>
+
+                    <!-- Upload imagem -->
+                    <div class="mb-4">
+                        <label class="rh-form-label">Foto do produto <span class="text-danger">*</span></label>
+                        <p class="fs-xs text-rh-muted mb-2">
+                            JPG, PNG ou WEBP &middot; Máx. 4MB
+                        </p>
+
+                        <!-- Preview -->
+                        <div id="preview-wrap" class="d-none mb-3">
+                            <img id="preview-img" src="" alt="Preview"
+                                style="width:100px; height:100px; object-fit:cover; border-radius:var(--rh-radius); border:1px solid var(--rh-border);">
+                        </div>
+
+                        <label for="imagem" class="rh-upload-zone w-100">
+                            <i class="bi bi-camera" style="font-size:2rem; color:var(--rh-primary);"></i>
+                            <p class="fw-600 mt-2 mb-0" id="upload-label">Clique para selecionar</p>
+                            <p class="fs-xs text-rh-muted mb-0">ou arraste e solte aqui</p>
+                            <input type="file" id="imagem" name="imagem" accept="image/*"
+                                onchange="previewImagem(this)">
+                        </label>
+                        @error('imagem')
+                        <div class="rh-invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="d-flex gap-3 pt-2">
+                        <button type="submit" class="btn-rh-primary flex-fill justify-content-center py-2">
+                            <i class="bi bi-check-lg"></i> Cadastrar Produto
+                        </button>
+                        <a href="{{ route('produtos.index') }}" class="btn-rh-ghost flex-fill justify-content-center py-2">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
         </div>
-    </form>
+    </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
-function previewImagens(input) {
-    const container = document.getElementById('preview-imagens');
-    container.innerHTML = '';
-
-    if (input.files.length > 5) {
-        alert('Máximo de 5 imagens.');
-        input.value = '';
-        return;
+    function previewImagem(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('preview-wrap').classList.remove('d-none');
+                document.getElementById('upload-label').textContent = input.files[0].name;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-
-    Array.from(input.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'w-20 h-20 object-cover rounded-xl border border-gray-200';
-            container.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-}
 </script>
 @endpush
-@endsection

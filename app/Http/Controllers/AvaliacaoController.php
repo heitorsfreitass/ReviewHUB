@@ -49,14 +49,14 @@ class AvaliacaoController extends Controller
             ->with('sucesso', 'Avaliação publicada! Obrigado por contribuir.');
     }
 
-    /** Formulário de edição */
+    /** Form de edição */
     public function edit(Produto $produto, Avaliacao $avaliacao)
     {
         $this->authorize('update', $avaliacao);
         return view('avaliacoes.edit', compact('produto', 'avaliacao'));
     }
 
-    /** Atualiza avaliação */
+    /** update avaliação */
     public function update(StoreAvaliacaoRequest $request, Produto $produto, Avaliacao $avaliacao)
     {
         $this->authorize('update', $avaliacao);
@@ -82,7 +82,7 @@ class AvaliacaoController extends Controller
             ->with('sucesso', 'Avaliação atualizada!');
     }
 
-    /** Remove avaliação */
+    /** deleta avaliação */
     public function destroy(Produto $produto, Avaliacao $avaliacao)
     {
         $this->authorize('delete', $avaliacao);
@@ -94,25 +94,18 @@ class AvaliacaoController extends Controller
             ->with('sucesso', 'Avaliação removida.');
     }
 
-    /**
-     * CONCEITO: Rota de ação customizada (não-CRUD)
-     * Toggle "útil" — marca/desmarca avaliação como útil
-     */
+    /* Toggle "útil" — marca/desmarca avaliação como útil */
     public function toggleUtil(Avaliacao $avaliacao)
     {
         $userId = auth()->id();
 
-        /**
-         * CONCEITO: firstOrCreate
-         * Busca o registro; se não existir, cria.
-         * Retorna [Model, bool $foiCriado]
-         */
+        /** Busca o registro; se não existir, cria. Retorna [Model, bool $foiCriado]*/
         [$voto, $criado] = VotoUtilidade::firstOrCreate([
             'avaliacao_id' => $avaliacao->id,
             'user_id'      => $userId,
         ])->only(['avaliacao_id', 'user_id']) + ['_criado' => false];
 
-        // Se já existia, remove (toggle)
+        // Se já existia, remove
         $votoExistente = VotoUtilidade::where('avaliacao_id', $avaliacao->id)
                                       ->where('user_id', $userId)
                                       ->first();
@@ -123,7 +116,7 @@ class AvaliacaoController extends Controller
             $avaliacao->decrement('votos_uteis');
             $util = false;
         } else {
-            // Não existia: marca
+            // Não existe: marca
             VotoUtilidade::create(['avaliacao_id' => $avaliacao->id, 'user_id' => $userId]);
             $avaliacao->increment('votos_uteis');
             $util = true;

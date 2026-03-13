@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Categorias de produto (Eletrônicos, Roupas, Alimentos, etc.)
+        // categorias de produto (Eletrônicos, Roupas, Alimentos, etc.)
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nome', 80)->unique();
@@ -18,7 +18,6 @@ return new class extends Migration
         });
 
         /**
-         * CONCEITO: Relacionamentos no schema
          * - foreignId('user_id') é atalho para $table->unsignedBigInteger('user_id')
          * - ->constrained() adiciona a FK apontando para a tabela "users"
          * - ->cascadeOnDelete() apaga os produtos se o usuário for apagado
@@ -26,7 +25,7 @@ return new class extends Migration
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
             $table->string('nome');                             // nome original do produto
-            $table->string('slug')->unique();                   // URL amigável: "iphone-15-pro"
+            $table->string('slug')->unique();                   // url amigável: "iphone-15-pro"
             $table->string('marca')->nullable();
             $table->text('descricao')->nullable();
             $table->string('imagem');                           // path do upload obrigatório
@@ -37,14 +36,12 @@ return new class extends Migration
                   ->constrained()
                   ->cascadeOnDelete();
 
-            // Campos calculados/desnormalizados para performance
-            // (evitar COUNT/AVG em toda query de listagem)
+            // campos calculados para performance
             $table->unsignedInteger('total_avaliacoes')->default(0);
-            $table->decimal('media_nota', 3, 2)->default(0);   // ex: 4.75
+            $table->decimal('media_nota', 3, 2)->default(0);
 
             $table->timestamps();
 
-            // Índices para buscas frequentes
             $table->index('nome');
             $table->index('media_nota');
         });
